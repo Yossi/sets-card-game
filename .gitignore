@@ -1,0 +1,5 @@
+.DS_Store
+python_image_lib.py
+retired_bmps/*
+*.py[co]
+
