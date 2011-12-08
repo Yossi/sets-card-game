@@ -117,7 +117,7 @@ def play():
             table.extend(deck.deal())
             
 if __name__ == '__main__':
-#    play()
+    #play()
     a = Card( number='three', color='red', shade='filled', shape='oval' )
     a.draw()
     b = Card( number='two', color='green', shade='shaded', shape='squiggle' )
