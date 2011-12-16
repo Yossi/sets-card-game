@@ -1,20 +1,19 @@
 # lifted off of here http://probablyprogramming.com/2008/06/26/building-a-python-web-application-part-1
 
 from wsgiref import util
-from string import Template
 
 # Templates
-wrapper = Template("""
-<html><head><title>$title</title></head><body>
-$body
+wrapper = """
+<html><head><title>%(title)s</title></head><body>
+%(body)s
 </body></html>
-""")
+"""
 
-four_oh_four = Template("""
+four_oh_four = """
 <html><body>
   <h1>404-ed!</h1>
-  The requested URL <i>$url</i> was not found.
-</body></html>""")
+  The requested URL <i>%(url)s</i> was not found.
+</body></html>"""
 
 # Template Variables for each page
 pages = {
@@ -36,11 +35,11 @@ def handle_request(environment, start_response):
         fn = util.shift_path_info(environment)
         if not fn:
             fn = 'index'
-        response = wrapper.substitute(**pages[fn])
+        response = wrapper % pages[fn]
         start_response('200 OK', [('content-type', 'text/html')])
     except:
         start_response('404 Not Found', [('content-type', 'text/html')])
-        response = four_oh_four.substitute(url=util.request_uri(environment))
+        response = four_oh_four % {'url':util.request_uri(environment)}
     return [response]
 
 if __name__ == '__main__':
