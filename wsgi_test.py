@@ -9,9 +9,10 @@ wrapper = """
 </body></html>
 """
 
-four_oh_four = """
+error = """
 <html><body>
-  <h1>404-ed!</h1>
+  <h1>%(error)s</h1>
+  <img src = http://httpcats.herokuapp.com/%(error)s.jpg /><br>
   The requested URL <i>%(url)s</i> was not found.
 </body></html>"""
 
@@ -38,8 +39,8 @@ def handle_request(environment, start_response):
         response = wrapper % pages[fn]
         start_response('200 OK', [('content-type', 'text/html')])
     except:
+        response = error % {'url':util.request_uri(environment), 'error': '404'}
         start_response('404 Not Found', [('content-type', 'text/html')])
-        response = four_oh_four % {'url':util.request_uri(environment)}
     return [response]
 
 if __name__ == '__main__':
