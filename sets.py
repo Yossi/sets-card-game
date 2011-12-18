@@ -1,4 +1,5 @@
 import os
+import cStringIO
 from random import shuffle, choice
 import Image, ImageOps
 from bmps.sprites import *
@@ -22,7 +23,7 @@ class Card(object):
         
         if not os.path.isfile('shapes.png') \
            or Image.open('shapes.png').size != (shape_size[0]*3, shape_size[1]*3):
-            print "regenerating shapes.png... please stand by"
+            #print "regenerating shapes.png... please stand by"
             create('shapes.png', shape_size)
         
         number = Deck.numbers.index(self.number) + 1
@@ -45,7 +46,9 @@ class Card(object):
         card = Image.new( 'RGB', ((shape_size[0]*3)+((margin+space)*2),
                                  shape_size[1]   + (margin * 2)    ), 'white' )
         card.paste(im, center(im, card.size))
-        card.show()        
+        #card.show()
+        self.card = cStringIO.StringIO()
+        card.save(self.card, 'PNG')
 
 class Deck(object):
     numbers = ('one', 'two', 'three')
@@ -98,12 +101,12 @@ def is_set(*s):
     return all([len(set([c.number for c in s])) != 2,
                 len(set([c.color for c in s])) != 2,
                 len(set([c.shade for c in s])) != 2,
-                len(set([c.shape for c in s])) != 2])
+                len(set([c.shape for c in s])) != 2]) and len(s) == 3
     
 def play():
     deck = Deck()
     table = deck.deal(4)
-    while len(deck):
+    while len(deck) or (len(table) and find_sets(table)):
         print '-----------', len(table), '-----------'
         print table
         sets = find_sets(table)
