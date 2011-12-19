@@ -80,10 +80,10 @@ def play():
             table.extend(deck.deal())
             
 if __name__ == '__main__':
-    #play()
-    a = Card( number='three', color='red', shade='filled', shape='oval' )
-    a.draw()
-    b = Card( number='two', color='green', shade='shaded', shape='squiggle' )
-    b.draw()
-    c = Card( number='one', color='purple', shade='empty', shape='diamond' )
-    c.draw()
+    play()
+    #a = Card( number='three', color='red', shade='filled', shape='oval' )
+    #a.draw()
+    #b = Card( number='two', color='green', shade='shaded', shape='squiggle' )
+    #b.draw()
+    #c = Card( number='one', color='purple', shade='empty', shape='diamond' )
+    #c.draw()
