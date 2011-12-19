@@ -1,6 +1,9 @@
 # lifted off of here http://probablyprogramming.com/2008/06/26/building-a-python-web-application-part-1
 
 from wsgiref import util
+from image import draw
+import urlparse
+
 
 # Templates
 wrapper = """
@@ -18,27 +21,37 @@ error = """
 
 # Template Variables for each page
 pages = {
-    'index': { 'title': "Hello There",
+    'index': wrapper % { 'title': "Hello There",
                'body':  
                """This is a test of the WSGI system.
                 Perhaps you would also be interested in
-                <a href="this_page">this page</a>?"""
+                <a href="this_page">this page</a>?<br>
+                <img src=http://127.1:8080/image/?number=two&color=green&shade=shaded&shape=squiggle>"""
               },
-    'this_page': { 'title': "You're at this page",
+    'this_page': wrapper % { 'title': "You're at this page",
                    'body': 
                    """Hey, you're at this page.
                    <a href="/">Go back</a>?"""
-                   }
+                 },
+    'image': {
+             },
     }
 
 def handle_request(environment, start_response):
     try:
+        query = dict(urlparse.parse_qsl(environment['QUERY_STRING']))
         fn = util.shift_path_info(environment)
         if not fn:
             fn = 'index'
-        response = wrapper % pages[fn]
-        start_response('200 OK', [('content-type', 'text/html')])
-    except:
+        if fn == 'image':
+            response = draw(**query)
+            #print response.size()
+            start_response('200 OK', [('content-type', 'image/png', )])
+            return response.getvalue()
+        else:
+            response = pages[fn]
+            start_response('200 OK', [('content-type', 'text/html')])
+    except KeyError:
         response = error % {'url':util.request_uri(environment), 'error': '404'}
         start_response('404 Not Found', [('content-type', 'text/html')])
     return [response]
@@ -50,4 +63,4 @@ if __name__ == '__main__':
     try:
         simple_server.make_server('', 8080, handle_request).serve_forever()
     except KeyboardInterrupt:
-        print("Ctrl-C caught, Server exiting...")
+        print("trl-C caught, Server exiting...")
