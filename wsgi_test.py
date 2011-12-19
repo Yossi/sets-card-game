@@ -26,7 +26,9 @@ pages = {
                """This is a test of the WSGI system.
                 Perhaps you would also be interested in
                 <a href="this_page">this page</a>?<br>
-                <img src=http://127.1:8080/image/?number=two&color=green&shade=shaded&shape=squiggle>"""
+                <img border=1 src=http://127.1:8080/image/?number=two&color=green&shade=shaded&shape=squiggle><br>
+                <img border=1 src=http://127.1:8080/image/?number=one&color=red&shade=empty&shape=diamond><br>
+                <img border=1 src=http://127.1:8080/image/?number=three&color=purple&shade=filled&shape=oval><br>"""
               },
     'this_page': wrapper % { 'title': "You're at this page",
                    'body': 
