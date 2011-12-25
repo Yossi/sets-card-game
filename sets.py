@@ -10,10 +10,10 @@ class Card(object):
         self.attributes = attributes
         
     def __repr__(self):
-        return '(%s %s %s %s)' % (attributes['number'].center(len(max(self.numbers, key=len))),
-                                  attributes['color'].center(len(max(self.colors, key=len))),
-                                  attributes['shade'].center(len(max(self.shades, key=len))), 
-                                  attributes['shape'].center(len(max(self.shapes, key=len))))
+        return '(%s %s %s %s)' % (self.attributes['number'].center(len(max(self.numbers, key=len))),
+                                  self.attributes['color'].center(len(max(self.colors, key=len))),
+                                  self.attributes['shade'].center(len(max(self.shades, key=len))), 
+                                  self.attributes['shape'].center(len(max(self.shapes, key=len))))
 
 class Deck(object):    
     def __init__(self):
@@ -58,10 +58,10 @@ def find_sets(table):
     return ret
               
 def is_set(*s):
-    return all([len(set([c.number for c in s])) != 2,
-                len(set([c.color for c in s])) != 2,
-                len(set([c.shade for c in s])) != 2,
-                len(set([c.shape for c in s])) != 2]) and len(s) == 3
+    return all([len(set([c.attributes['number'] for c in s])) != 2,
+                len(set([c.attributes['color'] for c in s])) != 2,
+                len(set([c.attributes['shade'] for c in s])) != 2,
+                len(set([c.attributes['shape'] for c in s])) != 2]) and len(s) == 3
     
 def play():
     deck = Deck()
@@ -72,9 +72,9 @@ def play():
         sets = find_sets(table)
         if sets:
             s = choice(sets)
-            print 'Found ', len(sets), ' ->', s
+            print 'Found', len(sets), '->', s
             [table.remove(card) for card in s]
-            if len(table) < 12:
+            if len(table) < 12 and len(deck):
                 table.extend(deck.deal())
         else:    
             table.extend(deck.deal())
