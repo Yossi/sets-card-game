@@ -1,6 +1,6 @@
 import os
 import Image, ImageOps
-from bmps.sprites import *
+from bmps.sprites import create, center
 import cStringIO
 from sets import Card
 
@@ -37,6 +37,7 @@ def draw(**kw):
 
         card.paste(im, center(im, card.size))
     except Exception as e:
+        # best would be if i could get the error message into an image
         print e
     #card.show()
     ret = cStringIO.StringIO()
