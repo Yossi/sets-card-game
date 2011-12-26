@@ -1,8 +1,9 @@
 import os
-import Image, ImageOps
-from bmps.sprites import create, center
+import traceback
 import cStringIO
+import Image, ImageOps, ImageDraw
 from sets import Card
+from bmps.sprites import create, center
 
 def draw(**kw):
     shape_size = 50, 90
@@ -37,11 +38,18 @@ def draw(**kw):
 
         card.paste(im, center(im, card.size))
     except Exception as e:
-        # best would be if i could get the error message into an image
-        print e
+        draw = ImageDraw.Draw(card)
+        error = traceback.format_exc()
+        attributes = ' '.join(kw.values())
+        for n, errLine in enumerate([attributes] + error.split('\n')):
+            draw.text((0,15*n), errLine, fill='black')
     #card.show()
+    
     ret = cStringIO.StringIO()
     card.save(ret, 'PNG')
     return ret
     
-    
+if __name__ == '__main__':
+    # testing code follows. not expected to be left in working order
+    c = draw(number='one', color='lue', shade='filled', shape='oval')
+
