@@ -1,8 +1,4 @@
-from wsgiref import util
-from image import draw
-import urlparse
-
-description = { # partial list of status codes
+description = { # partial list of status codes. massive overkill
 100: 'Continue',
 101: 'Switching Protocols',
 102: 'Processing',
@@ -65,31 +61,59 @@ description = { # partial list of status codes
 599: 'Network Connect Timeout Error',
 }
 
+# yeah, they belong up there. bite me.
+import urlparse, urllib
+from wsgiref import util
+from image import draw
+from sets import Deck
+
+
 def error(environment, start_response, code):
-    HTML = """
+    html = '''
     <html><body>
       <h1>%(error)s</h1>
-      <img src = http://httpcats.herokuapp.com/%(error)s.jpg /><br>
-      The requested URL <i>%(url)s</i> returned a %(error)s %(description)s.
-    </body></html>"""
-    start_response('%s %s' % (error, description[code]), [('content-type', 'text/html')])
-    return [HTML % {'url': util.request_uri(environment), 'error': code, 'description': description[code]}]
+      The requested URL <i>%(url)s</i> returned a %(error)s %(description)s.<br>
+      <img src = http://httpcats.herokuapp.com/%(error)s.jpg />
+    </body></html>'''
+    start_response('%s %s' % (code, description[code]), [('content-type', 'text/html')])
+    return [html % {'url': util.request_uri(environment), 'error': code, 'description': description[code]}]
 
 def image(environment, start_response, code):
+    # qsl not qs because qs gives a dict of lists, and we need a dict of strings
     query = dict(urlparse.parse_qsl(environment['QUERY_STRING']))
     try:
         result = draw(**query)
-    except: # this whole error thing should be dealt with upstream in image.py
+    except: # errors should have been dealt with upstream in image.py. if not, KA-BOOM!
         raise    
-    start_response('%s %s' % (error, description[code]), [('content-type', 'image/png')])
+    start_response('%s %s' % (code, description[code]), [('content-type', 'image/png')])
     return result.getvalue()
+
+def index(environment, start_response, code):
+    deck = Deck()
+    rows = []
+    for card1, card2, card3 in deck:
+        rows.append('''<tr>
+                         <td><img src="image?%s" border=1 /></td>
+                         <td><img src="image?%s" border=1 /></td>
+                         <td><img src="image?%s" border=1 /></td>
+                       </tr>''' % (urllib.urlencode(card1.attributes),
+                                   urllib.urlencode(card2.attributes),
+                                   urllib.urlencode(card3.attributes))
+                    )
+    html = '''
+    <html><body>
+      <table>
+        %s
+      </table>
+    </body></html>'''
+    start_response('%s %s' % (code, description[code]), [('content-type', 'text/html')])
+    return html % ''.join(rows)
 
 responses = {
 'error': error,
-'index': ,
+'index': index,
 'image': image,
 }
-
 
 
 def handle_request(environment, start_response):
@@ -97,7 +121,7 @@ def handle_request(environment, start_response):
         fn = util.shift_path_info(environment)
         if not fn:
             fn = 'index'
-        response = responses[fn]
+        response = responses[fn](environment, start_response, 200)
     except KeyError:
         response = responses['error'](environment, start_response, 404)
     return response
