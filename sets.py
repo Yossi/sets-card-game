@@ -44,7 +44,7 @@ class Deck(object):
             for i in xrange(n[0]):
                 ret.extend(self.next())
             return ret
-        return self.next() 
+        return self.next()
 
 def find_sets(table):
     ret = []
