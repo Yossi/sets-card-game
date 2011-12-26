@@ -1,4 +1,4 @@
-import Image, ImageDraw, ImageEnhance, ImageOps, ImageColor
+import Image, ImageEnhance
 import glob, os
 
 def center(im, background):
