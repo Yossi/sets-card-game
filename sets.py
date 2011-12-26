@@ -12,10 +12,10 @@ class Card(object):
     def __repr__(self):
         return '(%s %s %s %s)' % (self.attributes['number'].center(len(max(self.numbers, key=len))),
                                   self.attributes['color'].center(len(max(self.colors, key=len))),
-                                  self.attributes['shade'].center(len(max(self.shades, key=len))), 
+                                  self.attributes['shade'].center(len(max(self.shades, key=len))),
                                   self.attributes['shape'].center(len(max(self.shapes, key=len))))
 
-class Deck(object):    
+class Deck(object):
     def __init__(self):
         self.cards = []
 
@@ -76,7 +76,7 @@ def play():
             [table.remove(card) for card in s]
             if len(table) < 12 and len(deck):
                 table.extend(deck.deal())
-        else:    
+        else:
             table.extend(deck.deal())
             
 if __name__ == '__main__':

@@ -84,7 +84,7 @@ def image(environment, start_response, code):
     try:
         result = draw(**query)
     except: # errors should have been dealt with upstream in image.py. if not, KA-BOOM!
-        raise    
+        raise
     start_response('%s %s' % (code, description[code]), [('content-type', 'image/png')])
     return result.getvalue()
 
