@@ -1,9 +1,10 @@
 from random import shuffle, choice
+# rules of the game http://www.setgame.com/set/index.html
 
 class Card(object):
     numbers = ('one', 'two', 'three')
     colors  = ('green', 'red', 'purple')
-    shades  = ('filled', 'shaded', 'empty')
+    shades  = ('solid', 'open', 'striped')
     shapes  = ('squiggle', 'diamond', 'oval')
     
     def __init__(self, **attributes):
