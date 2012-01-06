@@ -14,7 +14,7 @@ def create(filename, shape_size):
     for infile in glob.iglob("bmps/*.bmp"):
         n = os.path.split(infile)[-1]
         name, ext = os.path.splitext(n)
-        x_scale = ('filled', 'shaded', 'empty').index(name.split('_')[0])
+        x_scale = ('solid', 'open', 'striped').index(name.split('_')[0])
         y_scale = ('squiggle', 'diamond', 'oval').index(name.split('_')[1])
         im = Image.open(infile)
         im.thumbnail(shape_size, Image.ANTIALIAS) # thumbnail rather than resize to keep aspect ratio
