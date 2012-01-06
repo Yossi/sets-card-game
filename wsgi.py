@@ -78,11 +78,16 @@ def error(environment, start_response, code):
     start_response('%s %s' % (code, description[code]), [('content-type', 'text/html')])
     return [html % {'url': util.request_uri(environment), 'error': code, 'description': description[code]}]
 
+cache = {}
 def image(environment, start_response, code):
     # qsl not qs because qs gives a dict of lists, and we need a dict of strings
     query = dict(urlparse.parse_qsl(environment['QUERY_STRING']))
     try:
-        result = draw(**query)
+        result = cache.get(tuple(sorted(query.values())), False)
+        if not result:
+            print 'cache miss'
+            result = draw(**query)
+            cache[tuple(sorted(query.values()))] = result
     except: # errors should have been dealt with upstream in image.py. if not, KA-BOOM!
         raise
     start_response('%s %s' % (code, description[code]), [('content-type', 'image/png')])
@@ -91,17 +96,17 @@ def image(environment, start_response, code):
 def index(environment, start_response, code):
     deck = Deck()
     rows = []
-    for card1, card2, card3 in deck:
+    for card in [deck.deal()]:
         rows.append('''<tr>
                          <td><img src="image?%s" border=1 /></td>
                          <td><img src="image?%s" border=1 /></td>
                          <td><img src="image?%s" border=1 /></td>
-                       </tr>''' % (urllib.urlencode(card1.attributes),
-                                   urllib.urlencode(card2.attributes),
-                                   urllib.urlencode(card3.attributes))
+                       </tr>''' % (urllib.urlencode(card[0].attributes),
+                                   urllib.urlencode(card[1].attributes),
+                                   urllib.urlencode(card[2].attributes))
                     )
     html = '''
-    <html><body>
+    <html><body bgcolor="#207430">
       <table>
         %s
       </table>
@@ -134,5 +139,3 @@ if __name__ == '__main__':
         simple_server.make_server('', 8080, handle_request).serve_forever()
     except KeyboardInterrupt:
         print("trl-C caught, Server exiting...")
-        
-        
