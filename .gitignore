@@ -3,4 +3,5 @@ python_image_lib.py
 shapes.png
 retired_bmps/*
 *.py[co]
-
+.vscode/
+venv/
