@@ -62,7 +62,7 @@ description = { # partial list of status codes. massive overkill
 }
 
 # yeah, they belong up there. bite me.
-import urlparse, urllib
+import urllib
 from wsgiref import util
 from image import draw
 from sets import Deck
@@ -81,11 +81,11 @@ def error(environment, start_response, code):
 cache = {}
 def image(environment, start_response, code):
     # qsl not qs because qs gives a dict of lists, and we need a dict of strings
-    query = dict(urlparse.parse_qsl(environment['QUERY_STRING']))
+    query = dict(urllib.parse.parse_qsl(environment['QUERY_STRING']))
     try:
         result = cache.get(tuple(sorted(query.values())), False)
         if not result:
-            print 'cache miss'
+            print('cache miss')
             result = draw(**query)
             cache[tuple(sorted(query.values()))] = result
     except: # errors should have been dealt with upstream in image.py. if not, KA-BOOM!
@@ -101,9 +101,9 @@ def index(environment, start_response, code):
                          <td><img src="image?%s" border=1 /></td>
                          <td><img src="image?%s" border=1 /></td>
                          <td><img src="image?%s" border=1 /></td>
-                       </tr>''' % (urllib.urlencode(card[0].attributes),
-                                   urllib.urlencode(card[1].attributes),
-                                   urllib.urlencode(card[2].attributes))
+                       </tr>''' % (urllib.parse.urlencode(card[0].attributes),
+                                   urllib.parse.urlencode(card[1].attributes),
+                                   urllib.parse.urlencode(card[2].attributes))
                     )
     html = '''
     <html><body bgcolor="#207430">
@@ -138,4 +138,4 @@ if __name__ == '__main__':
     try:
         simple_server.make_server('', 8080, handle_request).serve_forever()
     except KeyboardInterrupt:
-        print("trl-C caught, Server exiting...")
+        print("Ctrl-C caught, Server exiting...")
