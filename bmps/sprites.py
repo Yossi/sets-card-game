@@ -1,4 +1,4 @@
-import Image, ImageEnhance
+from PIL import Image, ImageEnhance
 import glob, os
 
 def center(im, background):
@@ -9,7 +9,7 @@ def center(im, background):
     return x, y
 
 def create(filename, shape_size):
-    output = Image.new('RGB', map(lambda x: x*3, shape_size), 'white')
+    output = Image.new('RGB', tuple(map(lambda x: x*3, shape_size)), 'white')
         
     for infile in glob.iglob("bmps/*.bmp"):
         n = os.path.split(infile)[-1]
