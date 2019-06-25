@@ -26,7 +26,6 @@ class Card(object):
         return '%s_%s_%s_%s.png' % (self.attributes['number'], self.attributes['color'],
                                     self.attributes['shade'],  self.attributes['shape'])
 
-
     def draw(self):
         shape_size = (50, 90)
         space = shape_size[0]//3
