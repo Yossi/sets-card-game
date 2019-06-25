@@ -87,7 +87,7 @@ class Deck(object):
         return len(self.cards)
     
     def __iter__(self):
-        return self
+        return iter(self)
         
     def next(self):
         if len(self.cards) >= 3:
