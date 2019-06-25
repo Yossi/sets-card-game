@@ -15,18 +15,23 @@ class Card(object):
     
     def __init__(self, **attributes):
         self.attributes = attributes
-        
+
     def __repr__(self):
         return '(%s %s %s %s)' % (self.attributes['number'].center(len(max(self.numbers, key=len))),
                                   self.attributes['color'].center(len(max(self.colors, key=len))),
                                   self.attributes['shade'].center(len(max(self.shades, key=len))),
                                   self.attributes['shape'].center(len(max(self.shapes, key=len))))
 
+    def filename(self):
+        return '%s_%s_%s_%s.png' % (self.attributes['number'], self.attributes['color'],
+                                    self.attributes['shade'],  self.attributes['shape'])
+
+
     def draw(self):
         shape_size = (50, 90)
         space = shape_size[0]//3
         margin = 10
-        
+
         card = Image.new( 'RGB', ((shape_size[0]*3)+((margin+space)*2),
                                 shape_size[1]   + (margin * 2)    ), 'white' )
         
@@ -57,16 +62,14 @@ class Card(object):
         except Exception:
             draw = ImageDraw.Draw(card)
             error = traceback.format_exc()
-            #attributes = ' '.join(kw.values())
             for n, errLine in enumerate([self.attributes] + error.split('\n')):
                 draw.text((0,15*n), errLine, fill='black')
-        card.show()
         
+        #card.show()
         ret = io.BytesIO()
         card.save(ret, 'PNG')
+        ret.seek(0, 0)
         return ret
-
-
 
 
 class Deck(object):
