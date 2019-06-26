@@ -97,7 +97,7 @@ class Deck(object):
     def deal(self, *n):
         if n and isinstance(n[0], int) and n[0] > 1:
             ret = []
-            for i in range(n[0]):
+            for _ in range(n[0]):
                 ret.extend(self.next())
             return ret
         return self.next()
@@ -114,6 +114,7 @@ def find_sets(table):
     return ret
               
 def is_set(*s):
+    # only look at 3 cards at a time. each attribute must be all different (len(3)) or all the same (len(1))
     return all([len(set([c.attributes['number'] for c in s])) != 2,
                 len(set([c.attributes['color'] for c in s])) != 2,
                 len(set([c.attributes['shade'] for c in s])) != 2,
