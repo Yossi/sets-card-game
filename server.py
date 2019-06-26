@@ -1,4 +1,5 @@
-from sets import Card
+from sets import Card, Deck
+from pprint import pprint
 from flask import render_template, url_for, Blueprint, Flask, send_file
 app = Blueprint('sets', __name__, url_prefix='/sets')
 
@@ -14,12 +15,19 @@ def card(attributes):
             attr['shade'] = attribute
         if attribute in Card().shapes:
             attr['shape'] = attribute
-        
+
     c = Card(**attr)
 
     return send_file(c.draw(), 
                       attachment_filename=c.filename(),
                       mimetype='image/png')
+
+@app.route('/table')
+def table():
+    deck = Deck()
+    table = [card.filename() for card in deck.deal(4)]
+    pprint(table)
+    return render_template('table.html', **{'table': table})
 
 if __name__ == '__main__':
     a = Flask(__name__)
