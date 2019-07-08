@@ -41,11 +41,9 @@ class Card(object):
         space = shape_size[0]//3
         margin = 10
 
-        card = Image.new( 'RGB', ((shape_size[0]*3)+((margin+space)*2),
-                                shape_size[1]   + (margin * 2)    ), 'white' )
+        card = Image.new( 'RGB', ((shape_size[0]*3)+((margin+space)*2), shape_size[1]+(margin*2)), 'white' )
         
-        if not os.path.isfile('shapes.png') \
-        or Image.open('shapes.png').size != (shape_size[0]*3, shape_size[1]*3):
+        if not os.path.isfile('shapes.png') or Image.open('shapes.png').size != (shape_size[0]*3, shape_size[1]*3):
             print("regenerating shapes.png... please stand by")
             create('shapes.png', shape_size)
         
