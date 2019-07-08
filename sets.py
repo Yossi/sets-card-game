@@ -15,6 +15,7 @@ class Card(object):
     
     def __init__(self, **attributes):
         self.attributes = attributes
+        self.valid = self.is_valid()
 
     def __repr__(self):
         return '(%s %s %s %s)' % (self.attributes['number'].center(len(max(self.numbers, key=len))),
@@ -22,9 +23,18 @@ class Card(object):
                                   self.attributes['shade'].center(len(max(self.shades, key=len))),
                                   self.attributes['shape'].center(len(max(self.shapes, key=len))))
 
+    def is_valid(self):
+        return all((self.attributes.get('number', None) in self.numbers,
+                    self.attributes.get('color', None) in self.colors,
+                    self.attributes.get('shade', None) in self.shades,
+                    self.attributes.get('shape', None) in self.shapes))
+
     def filename(self):
+        if self.valid:
         return '%s_%s_%s_%s.png' % (self.attributes['number'], self.attributes['color'],
                                     self.attributes['shade'],  self.attributes['shape'])
+        else:
+            return 'invalid.png'
 
     def draw(self):
         shape_size = (50, 90)
