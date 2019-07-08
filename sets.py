@@ -5,7 +5,7 @@ import traceback
 import io
 from bmps.sprites import create, center
 from pprint import pprint
-# rules of the game http://www.setgame.com/set/index.html
+# rules of the game https://www.setgame.com/file/set-english
 
 class Card(object):
     numbers = ('one', 'two', 'three')
