@@ -7,7 +7,7 @@ from bmps.sprites import create, center
 from pprint import pprint
 # rules of the game https://www.setgame.com/file/set-english
 
-class Card(object):
+class Card():
     numbers = ('one', 'two', 'three')
     colors  = ('green', 'red', 'purple')
     shades  = ('solid', 'open', 'striped')
@@ -79,7 +79,7 @@ class Card(object):
         return ret
 
 
-class Deck(object):
+class Deck():
     def __init__(self):
         self.cards = []
 
