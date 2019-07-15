@@ -49,7 +49,7 @@ class Card():
     def draw(self):
         '''returns filelike object'''
 
-        card = Image.new( 'RGB', self.size, 'white' )
+        card = Image.new('RGB', self.size, 'white')
 
         if not os.path.isfile('shapes.png') or Image.open('shapes.png').size != (self.shape_size[0]*3, self.shape_size[1]*3):
             print("regenerating shapes.png... please stand by")
@@ -63,9 +63,9 @@ class Card():
             y2 = y1 + self.shape_size[1]
 
             shapes = Image.open('shapes.png')
-            shape = shapes.crop( (x1,y1,x2,y2) )
+            shape = shapes.crop((x1, y1, x2, y2))
 
-            im = Image.new( 'L', (number*(self.shape_size[0]+self.space)-self.space, self.shape_size[1]), 'white' )
+            im = Image.new('L', (number*(self.shape_size[0]+self.space)-self.space, self.shape_size[1]), 'white')
             for n in range(number):
                 a = (self.shape_size[0]+self.space) * n
                 b = a + self.shape_size[0]
@@ -78,7 +78,7 @@ class Card():
             draw = ImageDraw.Draw(card)
             error = traceback.format_exc()
             for n, errLine in enumerate([self.attributes] + error.split('\n')):
-                draw.text((0,15*n), errLine, fill='black')
+                draw.text((0, 15 * n), errLine, fill='black')
 
         #card.show()
         ret = io.BytesIO()
@@ -95,7 +95,7 @@ class Deck():
             for color in Card.colors:
                 for shade in Card.shades:
                     for shape in Card.shapes:
-                        self.cards.append( Card(number=number, color=color, shade=shade, shape=shape) )
+                        self.cards.append(Card(number=number, color=color, shade=shade, shape=shape))
 
         shuffle(self.cards)
 
@@ -133,7 +133,8 @@ class Game():
 
     def find_sets(self, table=None):
         '''returns list of ALL sets on table'''
-        if table == None: table = self.table
+        if table == None:
+            table = self.table
         ret = []
         end = len(table)
         for x in range(0, end):
@@ -168,7 +169,7 @@ def play():
                 game.deal()
         else:
             game.deal()
-            
+
 if __name__ == '__main__':
     play()
     #a = Card( number='three', color='red', shade='solid', shape='oval' )
