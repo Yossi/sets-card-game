@@ -1,3 +1,4 @@
+# rules of the game https://www.setgame.com/file/set-english
 from random import shuffle, choice
 from PIL import Image, ImageOps, ImageDraw
 import os
@@ -5,7 +6,7 @@ import traceback
 import io
 from bmps.sprites import create, center
 from pprint import pprint
-# rules of the game https://www.setgame.com/file/set-english
+from collections import deque
 
 class Card():
     numbers = ('one', 'two', 'three')
@@ -120,9 +121,18 @@ class Deck():
 
 
 class Game():
+    def is_set(*s):
+        # only look at 3 cards at a time. each attribute must be all different (len(3)) or all the same (len(1))
+        return len(s) == 3 and \
+               all([len({c.attributes['number'] for c in s}) != 2,
+                    len({c.attributes['color'] for c in s}) != 2,
+                    len({c.attributes['shade'] for c in s}) != 2,
+                    len({c.attributes['shape'] for c in s}) != 2])
+
     def __init__(self):
         self.deck = Deck()
         self.table = self.deck.deal(4)
+        self.selected_cards = deque([], 3)
 
     def is_more_deck(self):
         return bool(len(self.deck))
@@ -148,12 +158,11 @@ class Game():
     def deal(self):
         self.table.extend(self.deck.deal())
 
-    def is_set(*s):
-        # only look at 3 cards at a time. each attribute must be all different (len(3)) or all the same (len(1))
-        return all([len({c.attributes['number'] for c in s}) != 2,
-                    len({c.attributes['color'] for c in s}) != 2,
-                    len({c.attributes['shade'] for c in s}) != 2,
-                    len({c.attributes['shape'] for c in s}) != 2]) and len(s) == 3
+    def is_selected_set(self):
+        return Game.is_set(*self.selected_cards)
+
+
+
 
 def play():
     game = Game()
