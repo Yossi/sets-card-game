@@ -25,10 +25,13 @@ class Card():
         self.valid = self.is_valid()
 
     def __repr__(self):
+        if self.valid:
         return '(%s %s %s %s)' % (self.attributes['number'].center(len(max(self.numbers, key=len))),
                                   self.attributes['color'].center(len(max(self.colors, key=len))),
                                   self.attributes['shade'].center(len(max(self.shades, key=len))),
                                   self.attributes['shape'].center(len(max(self.shapes, key=len))))
+        else:
+            return 'invalid card: %s' % self.attributes
 
     def is_valid(self):
         return all((self.attributes.get('number', None) in self.numbers,
