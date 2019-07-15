@@ -26,10 +26,10 @@ class Card():
 
     def __repr__(self):
         if self.valid:
-        return '(%s %s %s %s)' % (self.attributes['number'].center(len(max(self.numbers, key=len))),
-                                  self.attributes['color'].center(len(max(self.colors, key=len))),
-                                  self.attributes['shade'].center(len(max(self.shades, key=len))),
-                                  self.attributes['shape'].center(len(max(self.shapes, key=len))))
+            return '(%s %s %s %s)' % (self.attributes['number'].center(len(max(self.numbers, key=len))),
+                                      self.attributes['color'].center(len(max(self.colors, key=len))),
+                                      self.attributes['shade'].center(len(max(self.shades, key=len))),
+                                      self.attributes['shape'].center(len(max(self.shapes, key=len))))
         else:
             return 'invalid card: %s' % self.attributes
 
@@ -41,8 +41,8 @@ class Card():
 
     def filename(self):
         if self.valid:
-        return '%s_%s_%s_%s.png' % (self.attributes['number'], self.attributes['color'],
-                                    self.attributes['shade'],  self.attributes['shape'])
+            return '%s_%s_%s_%s.png' % (self.attributes['number'], self.attributes['color'],
+                                        self.attributes['shade'],  self.attributes['shape'])
         else:
             return 'invalid.png'
 
@@ -50,11 +50,11 @@ class Card():
         '''returns filelike object'''
 
         card = Image.new( 'RGB', self.size, 'white' )
-        
+
         if not os.path.isfile('shapes.png') or Image.open('shapes.png').size != (self.shape_size[0]*3, self.shape_size[1]*3):
             print("regenerating shapes.png... please stand by")
             create('shapes.png', self.shape_size)
-        
+
         try:
             number = Card.numbers.index(self.attributes['number']) + 1
             x1 = Card.shades.index(self.attributes['shade']) * self.shape_size[0]
@@ -64,7 +64,7 @@ class Card():
 
             shapes = Image.open('shapes.png')
             shape = shapes.crop( (x1,y1,x2,y2) )
-            
+
             im = Image.new( 'L', (number*(self.shape_size[0]+self.space)-self.space, self.shape_size[1]), 'white' )
             for n in range(number):
                 a = (self.shape_size[0]+self.space) * n
@@ -79,7 +79,7 @@ class Card():
             error = traceback.format_exc()
             for n, errLine in enumerate([self.attributes] + error.split('\n')):
                 draw.text((0,15*n), errLine, fill='black')
-        
+
         #card.show()
         ret = io.BytesIO()
         card.save(ret, 'PNG')
@@ -98,18 +98,18 @@ class Deck():
                         self.cards.append( Card(number=number, color=color, shade=shade, shape=shape) )
 
         shuffle(self.cards)
-    
+
     def __len__(self):
         return len(self.cards)
-    
+
     def __iter__(self):
         return iter(self)
-        
+
     def next(self):
         if len(self.cards) >= 3:
             return [self.cards.pop(), self.cards.pop(), self.cards.pop()]
         raise StopIteration
-    
+
     def deal(self, *n):
         if n and isinstance(n[0], int) and n[0] > 1:
             ret = []
@@ -118,39 +118,56 @@ class Deck():
             return ret
         return self.next()
 
-def find_sets(table):
-    ret = []
-    end = len(table)
-    for x in range(0, end):
-        for y in range(x+1, end):
-            for z in range(y+1, end):
-                A, B, C = table[x], table[y], table[z]
-                if is_set(A, B, C):
-                    ret.append([A, B, C])
-    return ret
-              
-def is_set(*s):
-    # only look at 3 cards at a time. each attribute must be all different (len(3)) or all the same (len(1))
-    return all([len(set([c.attributes['number'] for c in s])) != 2,
-                len(set([c.attributes['color'] for c in s])) != 2,
-                len(set([c.attributes['shade'] for c in s])) != 2,
-                len(set([c.attributes['shape'] for c in s])) != 2]) and len(s) == 3
-    
+
+class Game():
+    def __init__(self):
+        self.deck = Deck()
+        self.table = self.deck.deal(4)
+
+    def is_more_deck(self):
+        return bool(len(self.deck))
+
+    def remove_set(self, s):
+        for card in s:
+            self.table.remove(card)
+
+    def find_sets(self, table=None):
+        '''returns list of ALL sets on table'''
+        if table == None: table = self.table
+        ret = []
+        end = len(table)
+        for x in range(0, end):
+            for y in range(x+1, end):
+                for z in range(y+1, end):
+                    A, B, C = table[x], table[y], table[z]
+                    if Game.is_set(A, B, C):
+                        ret.append([A, B, C])
+        return ret
+
+    def deal(self):
+        self.table.extend(self.deck.deal())
+
+    def is_set(*s):
+        # only look at 3 cards at a time. each attribute must be all different (len(3)) or all the same (len(1))
+        return all([len({c.attributes['number'] for c in s}) != 2,
+                    len({c.attributes['color'] for c in s}) != 2,
+                    len({c.attributes['shade'] for c in s}) != 2,
+                    len({c.attributes['shape'] for c in s}) != 2]) and len(s) == 3
+
 def play():
-    deck = Deck()
-    table = deck.deal(4)
-    while len(deck) or (len(table) and find_sets(table)):
-        print('-----------', len(table), '-----------')
-        pprint(table)
-        sets = find_sets(table)
+    game = Game()
+    while game.is_more_deck() or (len(game.table) and game.find_sets()):
+        print('-----------', len(game.table), '-----------')
+        pprint(game.table)
+        sets = game.find_sets()
         if sets:
             s = choice(sets)
             print('Found', len(sets), '->', s)
-            [table.remove(card) for card in s]
-            if len(table) < 12 and len(deck):
-                table.extend(deck.deal())
+            game.remove_set(s)
+            if len(game.table) < 12 and game.is_more_deck():
+                game.deal()
         else:
-            table.extend(deck.deal())
+            game.deal()
             
 if __name__ == '__main__':
     play()
