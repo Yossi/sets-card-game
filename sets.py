@@ -9,9 +9,9 @@ from pprint import pprint
 
 class Card():
     numbers = ('one', 'two', 'three')
-    colors  = ('green', 'red', 'purple')
-    shades  = ('solid', 'open', 'striped')
-    shapes  = ('squiggle', 'diamond', 'oval')
+    colors = ('green', 'red', 'purple')
+    shades = ('solid', 'open', 'striped')
+    shapes = ('squiggle', 'diamond', 'oval')
     
     # adjustable numbers to tweak cards' look
     shape_size = (50, 90)
