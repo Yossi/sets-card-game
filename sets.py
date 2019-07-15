@@ -13,6 +13,13 @@ class Card():
     shades  = ('solid', 'open', 'striped')
     shapes  = ('squiggle', 'diamond', 'oval')
     
+    # adjustable numbers to tweak cards' look
+    shape_size = (50, 90)
+    space = shape_size[0]//3
+    margin = 10
+    
+    size = (shape_size[0]*3)+((margin+space)*2), shape_size[1]+(margin*2)
+
     def __init__(self, **attributes):
         self.attributes = attributes
         self.valid = self.is_valid()
@@ -37,31 +44,29 @@ class Card():
             return 'invalid.png'
 
     def draw(self):
-        shape_size = (50, 90)
-        space = shape_size[0]//3
-        margin = 10
+        '''returns filelike object'''
 
-        card = Image.new( 'RGB', ((shape_size[0]*3)+((margin+space)*2), shape_size[1]+(margin*2)), 'white' )
+        card = Image.new( 'RGB', self.size, 'white' )
         
-        if not os.path.isfile('shapes.png') or Image.open('shapes.png').size != (shape_size[0]*3, shape_size[1]*3):
+        if not os.path.isfile('shapes.png') or Image.open('shapes.png').size != (self.shape_size[0]*3, self.shape_size[1]*3):
             print("regenerating shapes.png... please stand by")
-            create('shapes.png', shape_size)
+            create('shapes.png', self.shape_size)
         
         try:
             number = Card.numbers.index(self.attributes['number']) + 1
-            x1 = Card.shades.index(self.attributes['shade']) * shape_size[0]
-            x2 = x1 + shape_size[0]
-            y1 = Card.shapes.index(self.attributes['shape']) * shape_size[1]
-            y2 = y1 + shape_size[1]
+            x1 = Card.shades.index(self.attributes['shade']) * self.shape_size[0]
+            x2 = x1 + self.shape_size[0]
+            y1 = Card.shapes.index(self.attributes['shape']) * self.shape_size[1]
+            y2 = y1 + self.shape_size[1]
 
             shapes = Image.open('shapes.png')
             shape = shapes.crop( (x1,y1,x2,y2) )
             
-            im = Image.new( 'L', (number*(shape_size[0]+space)-space, shape_size[1]), 'white' )
+            im = Image.new( 'L', (number*(self.shape_size[0]+self.space)-self.space, self.shape_size[1]), 'white' )
             for n in range(number):
-                a = (shape_size[0]+space) * n
-                b = a + shape_size[0]
-                box = (a, 0, b, shape_size[1])
+                a = (self.shape_size[0]+self.space) * n
+                b = a + self.shape_size[0]
+                box = (a, 0, b, self.shape_size[1])
                 im.paste(shape, box)
             im = ImageOps.colorize(im, self.attributes['color'], 'white')
 
