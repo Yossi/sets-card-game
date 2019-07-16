@@ -41,13 +41,10 @@ def show_scorecard(scorecard, game, my_font):
     scorecard.blit(score, (0, FONT_SIZE))
     scorecard.blit(num_sets, (0, FONT_SIZE*2))
     scorecard.blit(cards_left, (0, FONT_SIZE*3))
-    
-    
-    #screen.blit(win_text, (screen_size_x - (card_size[0] + SPACE_BETWEEN_CARDS), screen_size_y - (card_size[1] + SPACE_BETWEEN_CARDS)))
 
 def main():
     game = sets.Game()
-    while not game.find_sets():
+    while not game.num_sets:
         game.deal()
 
     ###REMOVE: CHEAT###
@@ -95,9 +92,9 @@ def main():
             set_found = False
             game.remove_win_set()
 
-            if len(game.table) <= 12:
+            if len(game.table) < 12:
                 game.deal()
-            while not game.find_sets():
+            while not game.num_sets:
                 game.deal()
 
         pygame.display.update()
