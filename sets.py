@@ -133,6 +133,8 @@ class Game():
         self.deck = Deck()
         self.table = self.deck.deal(4)
         self.selected_cards = deque([], 3)
+        self.score = 0
+        self.num_sets = len(self.find_sets())
 
     def is_more_deck(self):
         return bool(len(self.deck))
@@ -140,6 +142,11 @@ class Game():
     def remove_set(self, s):
         for card in s:
             self.table.remove(card)
+
+    def remove_win_set(self):
+        self.remove_set(self.selected_cards)
+        self.selected_cards.clear()
+        self.score += 1
 
     def find_sets(self, table=None):
         '''returns list of ALL sets on table'''
@@ -163,7 +170,7 @@ class Game():
         finally:
             self.num_sets = len(self.find_sets())
 
-    def is_selected_set(self):
+    def is_score(self):
         return Game.is_set(*self.selected_cards)
 
 
