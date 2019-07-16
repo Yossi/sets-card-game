@@ -12,7 +12,7 @@ class Card():
     numbers = ('one', 'two', 'three')
     colors = ('green', 'red', 'purple')
     shades = ('solid', 'open', 'striped')
-    shapes = ('squiggle', 'diamond', 'oval')
+    shapes = ('squiggle', 'diamond', 'stadium')
     
     # adjustable numbers to tweak cards' look
     shape_size = (100, 180)
