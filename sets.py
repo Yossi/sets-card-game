@@ -143,7 +143,7 @@ class Game():
 
     def find_sets(self, table=None):
         '''returns list of ALL sets on table'''
-        if table == None:
+        if table is None:
             table = self.table
         ret = []
         end = len(table)
@@ -156,12 +156,15 @@ class Game():
         return ret
 
     def deal(self):
-        self.table.extend(self.deck.deal())
+        try:
+            self.table.extend(self.deck.deal())
+        except StopIteration:
+            pass
+        finally:
+            self.num_sets = len(self.find_sets())
 
     def is_selected_set(self):
         return Game.is_set(*self.selected_cards)
-
-
 
 
 def play():
@@ -181,7 +184,7 @@ def play():
 
 if __name__ == '__main__':
     play()
-    #a = Card( number='three', color='red', shade='solid', shape='oval' )
+    #a = Card( number='three', color='red', shade='solid', shape='stadium' )
     #a.draw()
     #b = Card( number='two', color='green', shade='striped', shape='squiggle' )
     #b.draw()
