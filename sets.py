@@ -32,8 +32,7 @@ class Card():
                                       self.attributes['color'].center(len(max(self.colors, key=len))),
                                       self.attributes['shade'].center(len(max(self.shades, key=len))),
                                       self.attributes['shape'].center(len(max(self.shapes, key=len))))
-        else:
-            return 'invalid card: %s' % self.attributes
+        return 'invalid card: %s' % self.attributes
 
     def is_valid(self):
         return all((self.attributes.get('number', None) in self.numbers,
