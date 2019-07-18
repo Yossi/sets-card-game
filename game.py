@@ -58,7 +58,7 @@ def cheat(game, screen):
 
 def main():
     game = sets.Game()
-    while not game.num_sets:
+    while not game.num_sets and game.is_more_deck():
         game.deal()
 
     card_size = sets.Card().size
@@ -107,7 +107,9 @@ def main():
 
             if len(game.table) < 12:
                 game.deal()
-            while not game.num_sets:
+            else:
+                game.num_sets = len(game.find_sets())
+            while not game.num_sets and game.is_more_deck():
                 game.deal()
 
         pygame.display.update()
