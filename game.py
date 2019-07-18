@@ -93,7 +93,7 @@ def main():
             pygame.draw.rect(screen, PERSISTANT_HIGHLIGHT, (card.position[0], card.position[1], card_size[0], card_size[1]), SPACE_BETWEEN_CARDS*2)
 
         if set_found:
-            win_text = my_font.render('SET!', True, WIN_COLOR, BGCOLOR)
+            win_text = my_font.render('SET!', True, WIN_COLOR)
             for card in game.selected_cards:
                 pygame.draw.rect(screen, WIN_COLOR, (card.position[0], card.position[1], card_size[0], card_size[1]), SPACE_BETWEEN_CARDS*2)
             screen.blit(win_text, (screen_size_x - (card_size[0] + SPACE_BETWEEN_CARDS), screen_size_y - (card_size[1] + SPACE_BETWEEN_CARDS)))
@@ -111,6 +111,10 @@ def main():
                 game.num_sets = len(game.find_sets())
             while not game.num_sets and game.is_more_deck():
                 game.deal()
+
+        if game.game_over():
+            game_over = my_font.render('Game Over!', True, WIN_COLOR)
+            scorecard.blit(game_over, (0, 0))
 
         pygame.display.update()
 
