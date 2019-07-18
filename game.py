@@ -42,6 +42,13 @@ def show_scorecard(scorecard, game, my_font):
     scorecard.blit(num_sets, (0, FONT_SIZE*2))
     scorecard.blit(cards_left, (0, FONT_SIZE*3))
 
+def cheat(game, screen):
+    if game.num_sets:
+        for card in game.find_sets()[0]:
+            position = (card.position[0] + SPACE_BETWEEN_CARDS * 2,
+                        card.position[1] + SPACE_BETWEEN_CARDS * 2)
+            pygame.draw.circle(screen, PERSISTANT_HIGHLIGHT, position, SPACE_BETWEEN_CARDS)
+
 def main():
     game = sets.Game()
     while not game.num_sets:
