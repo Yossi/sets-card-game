@@ -28,6 +28,7 @@ class Card():
 
     def __repr__(self):
         if self.valid:
+            #return 'Card(number="{number}", color="{color}", shade="{shade}", shape="{shape}")'.format(**self.attributes)
             return '(%s %s %s %s)' % (self.attributes['number'].center(len(max(self.numbers, key=len))),
                                       self.attributes['color'].center(len(max(self.colors, key=len))),
                                       self.attributes['shade'].center(len(max(self.shades, key=len))),
@@ -97,6 +98,8 @@ class Deck():
                 for shade in Card.shades:
                     for shape in Card.shapes:
                         self.cards.append(Card(number=number, color=color, shade=shade, shape=shape))
+
+        #self.cards = [Card(), Card(number="two", color="red", shade="striped", shape="diamond"), Card(number="three", color="green", shade="striped", shape="stadium"), Card(number="one", color="red", shade="solid", shape="stadium"), Card(number="one", color="green", shade="open", shape="squiggle"), Card(number="one", color="green", shade="open", shape="stadium"), Card(number="one", color="red", shade="striped", shape="stadium"), Card(number="one", color="red", shade="open", shape="diamond"), Card(number="three", color="red", shade="solid", shape="squiggle"), Card(number="two", color="purple", shade="solid", shape="squiggle"), Card(number="three", color="green", shade="striped", shape="squiggle"), Card(number="one", color="red", shade="striped", shape="diamond"), Card(number="two", color="red", shade="striped", shape="squiggle"), Card(number="one", color="green", shade="striped", shape="squiggle"), Card(number="one", color="green", shade="solid", shape="stadium")]
 
         shuffle(self.cards)
 
@@ -178,6 +181,16 @@ class Game():
         return Game.is_set(*self.selected_cards)
 
 
+def hunt():
+    game = Game()
+    game.deal()
+    my_table = deque(game.table, 15)
+    while game.is_more_deck():
+        if len(game.find_sets(my_table)) == 1:
+            print(list(my_table))
+        my_table.append(game.deck.cards.pop())
+        my_table.popleft()
+
 def play():
     game = Game()
     while game.is_more_deck() or (len(game.table) and game.find_sets()):
@@ -194,6 +207,7 @@ def play():
             game.deal()
 
 if __name__ == '__main__':
+    #hunt()
     play()
     #a = Card( number='three', color='red', shade='solid', shape='stadium' )
     #a.draw()
