@@ -137,6 +137,9 @@ class Game():
         self.score = 0
         self.num_sets = len(self.find_sets())
 
+    def game_over(self):
+        return not (self.is_more_deck() or self.num_sets)
+
     def is_more_deck(self):
         return bool(len(self.deck))
 
