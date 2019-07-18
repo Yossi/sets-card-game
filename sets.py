@@ -124,6 +124,7 @@ class Game():
     def is_set(*s):
         # only look at 3 cards at a time. each attribute must be all different (len(3)) or all the same (len(1))
         return len(s) == 3 and \
+               all({c.valid for c in s}) and \
                all([len({c.attributes['number'] for c in s}) != 2,
                     len({c.attributes['color'] for c in s}) != 2,
                     len({c.attributes['shade'] for c in s}) != 2,
