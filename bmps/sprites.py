@@ -26,4 +26,3 @@ def create(filename, shape_size):
         output.paste( shape, (shape.size[0]*x_scale, shape.size[1]*y_scale,
                               shape.size[0]*(x_scale+1), shape.size[1]*(y_scale+1)) )
     output.save(filename)
-
