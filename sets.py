@@ -15,9 +15,10 @@ class Card():
     shapes = ('squiggle', 'diamond', 'stadium')
     
     # adjustable numbers to tweak cards' look
-    shape_size = (100, 180)
+    multiplier = 2
+    shape_size = (50 * multiplier, 90 * multiplier)
     space = shape_size[0]//3
-    margin = 20
+    margin = 10 * multiplier
     
     size = (shape_size[0]*3)+((margin+space)*2), shape_size[1]+(margin*2)
 
