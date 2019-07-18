@@ -4,6 +4,7 @@ from PIL import Image, ImageOps, ImageDraw
 import os
 import traceback
 import io
+import tempfile
 from bmps.sprites import create, center
 from pprint import pprint
 from collections import deque
@@ -25,6 +26,7 @@ class Card():
     def __init__(self, **attributes):
         self.attributes = attributes
         self.valid = self.is_valid()
+        self.image = tempfile.SpooledTemporaryFile(max_size=10000)
 
     def __repr__(self):
         if self.valid:
@@ -50,41 +52,44 @@ class Card():
 
     def draw(self):
         '''returns filelike object'''
+        if not self.image.tell():
+            card = Image.new('RGB', self.size, 'white')
 
-        card = Image.new('RGB', self.size, 'white')
+            if not os.path.isfile('shapes.png') or Image.open('shapes.png').size != (self.shape_size[0]*3, self.shape_size[1]*3):
+                print("regenerating shapes.png... please stand by")
+                create('shapes.png', self.shape_size)
 
-        if not os.path.isfile('shapes.png') or Image.open('shapes.png').size != (self.shape_size[0]*3, self.shape_size[1]*3):
-            print("regenerating shapes.png... please stand by")
-            create('shapes.png', self.shape_size)
+            try:
+                number = Card.numbers.index(self.attributes['number']) + 1
+                x1 = Card.shades.index(self.attributes['shade']) * self.shape_size[0]
+                x2 = x1 + self.shape_size[0]
+                y1 = Card.shapes.index(self.attributes['shape']) * self.shape_size[1]
+                y2 = y1 + self.shape_size[1]
 
-        try:
-            number = Card.numbers.index(self.attributes['number']) + 1
-            x1 = Card.shades.index(self.attributes['shade']) * self.shape_size[0]
-            x2 = x1 + self.shape_size[0]
-            y1 = Card.shapes.index(self.attributes['shape']) * self.shape_size[1]
-            y2 = y1 + self.shape_size[1]
+                shapes = Image.open('shapes.png')
+                shape = shapes.crop((x1, y1, x2, y2))
 
-            shapes = Image.open('shapes.png')
-            shape = shapes.crop((x1, y1, x2, y2))
+                im = Image.new('L', (number*(self.shape_size[0]+self.space)-self.space, self.shape_size[1]), 'white')
+                for n in range(number):
+                    a = (self.shape_size[0]+self.space) * n
+                    b = a + self.shape_size[0]
+                    box = (a, 0, b, self.shape_size[1])
+                    im.paste(shape, box)
+                im = ImageOps.colorize(im, self.attributes['color'], 'white')
 
-            im = Image.new('L', (number*(self.shape_size[0]+self.space)-self.space, self.shape_size[1]), 'white')
-            for n in range(number):
-                a = (self.shape_size[0]+self.space) * n
-                b = a + self.shape_size[0]
-                box = (a, 0, b, self.shape_size[1])
-                im.paste(shape, box)
-            im = ImageOps.colorize(im, self.attributes['color'], 'white')
+                card.paste(im, center(im, card.size))
+            except Exception:
+                draw = ImageDraw.Draw(card)
+                error = traceback.format_exc()
+                for n, err_line in enumerate([self.attributes] + error.split('\n')):
+                    draw.text((0, 15 * n), err_line, fill='black')
 
-            card.paste(im, center(im, card.size))
-        except Exception:
-            draw = ImageDraw.Draw(card)
-            error = traceback.format_exc()
-            for n, errLine in enumerate([self.attributes] + error.split('\n')):
-                draw.text((0, 15 * n), errLine, fill='black')
+            #card.show()
+            card.save(self.image, 'PNG')
 
-        #card.show()
         ret = io.BytesIO()
-        card.save(ret, 'PNG')
+        self.image.seek(0, 0)
+        ret.write(self.image.read())
         ret.seek(0, 0)
         return ret
 
@@ -208,9 +213,10 @@ def play():
 
 if __name__ == '__main__':
     #hunt()
-    play()
-    #a = Card( number='three', color='red', shade='solid', shape='stadium' )
-    #a.draw()
+    #play()
+    a = Card( number='three', color='red', shade='solid', shape='stadium' )
+    a.draw()
+    a.draw()
     #b = Card( number='two', color='green', shade='striped', shape='squiggle' )
     #b.draw()
     #c = Card( number='one', color='purple', shade='open', shape='diamond' )
