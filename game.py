@@ -1,5 +1,12 @@
-import pygame
+import sys
 import sets
+import pygame
+
+MUTE, CHEAT = False, False
+if 'mute' in sys.argv:
+    MUTE = True
+if 'cheat' in sys.argv:
+    CHEAT = True
 
 BGCOLOR = (0, 0, 0)
 WIN_COLOR = (0, 200, 50)
@@ -54,10 +61,6 @@ def main():
     while not game.num_sets:
         game.deal()
 
-    ###REMOVE: CHEAT###
-    print(game.find_sets())
-    ###################
-
     card_size = sets.Card().size
 
     screen_size_x = (card_size[0] + SPACE_BETWEEN_CARDS) * COLUMNS + SPACE_BETWEEN_CARDS
@@ -78,6 +81,8 @@ def main():
 
         show_table(screen, game.table)
         show_scorecard(scorecard, game, my_font)
+        if CHEAT:
+            cheat(game, screen)
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
         active_card = select_card(game, mouse_x, mouse_y)
@@ -93,8 +98,9 @@ def main():
                 pygame.draw.rect(screen, WIN_COLOR, (card.position[0], card.position[1], card_size[0], card_size[1]), SPACE_BETWEEN_CARDS*2)
             screen.blit(win_text, (screen_size_x - (card_size[0] + SPACE_BETWEEN_CARDS), screen_size_y - (card_size[1] + SPACE_BETWEEN_CARDS)))
             pygame.display.update()
-            ding.play()
-            pygame.time.delay(1000)
+            if not MUTE:
+                ding.play()
+            pygame.time.delay(750)
 
             set_found = False
             game.remove_win_set()
