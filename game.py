@@ -128,7 +128,11 @@ def main():
                 if active_card:
                     toggle_selection(game, active_card)
                     set_found = game.is_score()
-
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    cheat(game, screen)
+                    pygame.display.update()
+                    print('CHEAT!')
 
 if __name__ == '__main__':
     main()
